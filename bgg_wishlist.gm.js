@@ -89,7 +89,7 @@ function saveBox() {
 }
 
 function cancelBox() {
-    // $('button[ng-click="$dismiss()"]')[0].click();
+    $('button[ng-click="$dismiss()"]')[0].click();
 }
 
 function wishlist(level) {
