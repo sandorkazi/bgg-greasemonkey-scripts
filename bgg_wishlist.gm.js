@@ -50,7 +50,6 @@ function setCheckboxObject(checkbox, value) {
 }
 
 function getCheckboxValue(id) {
-    console.log(id);
     return getCheckboxObject(id).checked ? 1 : 0;
 }
 
@@ -62,8 +61,11 @@ function setCheckboxValue(id, value) {
 function setWishlistPriority(level) {
     var wlp = $('select[ng-model=\"item.wishlistpriority\"]');
     wlp.val('number:' + level);
+    // noinspection JSUnresolvedFunction
+    wlp.trigger('input');
     wlp.trigger('change');
-    location.assign("javascript:$('select[ng-model=\"item.wishlistpriority\"]').change();void(0)");  // GM location hack
+    // noinspection JSUnresolvedFunction, JSUnresolvedVariable, ChainedFunctionCallJS, SpellCheckingInspection
+    unsafeWindow.jQuery('select[ng-model=\"item.wishlistpriority\"]').change();  // GM location hack
 }
 
 function openBoxFor(callback) {
@@ -87,7 +89,7 @@ function saveBox() {
 }
 
 function cancelBox() {
-    $('button[ng-click="$dismiss()"]')[0].click();
+    // $('button[ng-click="$dismiss()"]')[0].click();
 }
 
 function wishlist(level) {
@@ -97,11 +99,11 @@ function wishlist(level) {
                 cancelBox();
                 alert("Can't wishlist an owned item via hotkeys.");
             } else {
+                setCheckboxValue(8, 1);  // Wishlist
+                setWishlistPriority(level);  // Wishlist priority
                 setCheckboxValue(6, 1 >= level ? 1 : 0);  // Want to Buy
                 setCheckboxValue(5, 2 >= level ? 1 : 0);  // Want in Trade
                 setCheckboxValue(4, 4 >= level ? 1 : 0);  // Want to Play
-                setCheckboxValue(8, 1);  // Wishlist
-                setWishlistPriority(level);  // Wishlist priority
                 saveBox();
             }
         }
