@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         bgg wishlist
+// @name         bgg hotkey
 // @namespace    bgg
-// @version      1.0
-// @description  puts the boardgame viewed on the wishlists respective category
+// @version      1.1
+// @description  bgg video or wishlist
 // @match        https://*.boardgamegeek.com/boardgame/*
 // @match        https://boardgamegeek.com/boardgame/*
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js

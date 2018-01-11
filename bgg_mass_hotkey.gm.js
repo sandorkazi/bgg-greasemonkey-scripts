@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         bgg mass
+// @name         bgg mass hotkey
 // @namespace    bgg
 // @version      1.1
 // @description  bgg mass video or wishlist

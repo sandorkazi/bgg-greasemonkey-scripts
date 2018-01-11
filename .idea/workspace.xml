@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b2522e90-5b9b-48b9-b10e-ccb3660a0109" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/bgg_mass_review.gm.js" afterPath="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/bgg_wishlist.gm.js" afterPath="$PROJECT_DIR$/bgg_hotkey.gm.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bgg_hotkey.gm.js" afterPath="$PROJECT_DIR$/bgg_hotkey.gm.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" afterPath="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,9 +17,11 @@
       <file leaf-file-name="bgg_hotkey.gm.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bgg_hotkey.gm.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="216">
+              <caret line="12" column="15" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -28,8 +29,8 @@
       <file leaf-file-name="bgg_mass_hotkey.gm.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bgg_mass_hotkey.gm.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="178" column="20" lean-forward="false" selection-start-line="178" selection-start-column="20" selection-end-line="178" selection-end-column="20" />
+            <state relative-caret-position="90">
+              <caret line="5" column="25" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="184" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -62,8 +63,8 @@
       <list>
         <option value="$PROJECT_DIR$/bgg_mass_review.gm.js" />
         <option value="$PROJECT_DIR$/bgg_wishlist.gm.js" />
-        <option value="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" />
         <option value="$PROJECT_DIR$/bgg_hotkey.gm.js" />
+        <option value="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" />
       </list>
     </option>
   </component>
@@ -286,7 +287,7 @@
       <workItem from="1511290770545" duration="22794000" />
       <workItem from="1511438359862" duration="7422000" />
       <workItem from="1512118968495" duration="33000" />
-      <workItem from="1515598826426" duration="2520000" />
+      <workItem from="1515598826426" duration="2845000" />
     </task>
     <task id="LOCAL-00001" summary="wishlist hotkeys added">
       <created>1511384228338</created>
@@ -299,7 +300,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37416000" />
+    <option name="totallyTimeSpent" value="37741000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="960" height="1053" extended-state="4" />
@@ -353,7 +354,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -361,7 +364,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -369,7 +374,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -382,16 +389,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bgg_hotkey.gm.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="216">
+          <caret line="12" column="15" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bgg_mass_hotkey.gm.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="178" column="20" lean-forward="false" selection-start-line="178" selection-start-column="20" selection-end-line="178" selection-end-column="20" />
+        <state relative-caret-position="90">
+          <caret line="5" column="25" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="184" selection-end-column="0" />
           <folding />
         </state>
       </provider>
