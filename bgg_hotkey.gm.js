@@ -111,12 +111,15 @@ function wishlist(level) {
 }
 
 function keyPress(e) {
+    "use strict";
+
     var evtObj = window.event ? event : e;
-    if      ((49 === evtObj.keyCode || 49 === evtObj.which) && evtObj.ctrlKey) wishlist(1);
-    else if ((50 === evtObj.keyCode || 50 === evtObj.which) && evtObj.ctrlKey) wishlist(2);
-    else if ((51 === evtObj.keyCode || 51 === evtObj.which) && evtObj.ctrlKey) wishlist(3);
-    else if ((52 === evtObj.keyCode || 52 === evtObj.which) && evtObj.ctrlKey) wishlist(4);
-    else if ((53 === evtObj.keyCode || 53 === evtObj.which) && evtObj.ctrlKey) wishlist(5);
+    if      ((49 === evtObj.keyCode || 49 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(1);
+    else if ((50 === evtObj.keyCode || 50 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(2);
+    else if ((51 === evtObj.keyCode || 51 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(3);
+    else if ((52 === evtObj.keyCode || 52 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(4);
+    else if ((53 === evtObj.keyCode || 53 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(5);
+
 }
 
 document.onkeydown = keyPress;
