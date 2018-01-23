@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         bgg mass video review
+// @name         bgg mass hotkey
 // @namespace    bgg
 // @version      1.1
-// @description  video review button on the collection button
+// @description  bgg mass video or wishlist
 // @match        https://*.boardgamegeek.com/*
 // @match        https://boardgamegeek.com/*
 // @author       You
@@ -11,7 +11,12 @@
 // ==/UserScript==
 
 // ==KeyCodes==
-// Ctrl+Y        Do...
+// Ctrl+Y        Show video review button for all titles
+// Ctrl+1        Set every opened box to Wishlist 1, Want to Play, Want in Trade, Want to Buy
+// Ctrl+2        Set every opened box to Wishlist 1, Want to Play, Want in Trade
+// Ctrl+3        Set every opened box to Wishlist 1, Want to Play
+// Ctrl+4        Set every opened box to Wishlist 1, Want to Play
+// Ctrl+5        Set every opened box to Wishlist 1
 // ==/KeyCodes==
 
 
@@ -139,13 +144,41 @@ function hottestReview(id, callback) {
     )
 }
 
+function wishlist(level) {
+    "use strict";
+
+    var boxes = document.getElementsByClassName('select-free');
+
+    Array.prototype.forEach.call(boxes, function(box){
+        var inputs = box.getElementsByTagName('input');
+        Array.prototype.forEach.call(inputs, function(input){
+            if ('wishlist' === input.name) {
+                input.checked = 1;
+            } else if ('wanttobuy' === input.name) {
+                input.checked = 1 ? 1 >= level : 0;
+            } else if ('want' === input.name) {
+                input.checked = 1 ? 2 >= level : 0;
+            } else if ('wanttoplay' === input.name) {
+                input.checked = 1 ? 4 >= level : 0;
+            }
+        })
+        var select = box.getElementsByTagName('select')[0];
+        select.value = level;
+        box.getElementsByClassName('geekinput')[0].click();
+    });
+}
+
 function keyPress(e) {
     "use strict";
 
     var evtObj = window.event ? window.event : e;
-    if ((89 === evtObj.keyCode || 89 === evtObj.which) && evtObj.ctrlKey) {
-        reviewButtons();
-    }
+    if      ((89 === evtObj.keyCode || 89 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) reviewButtons();
+    else if ((49 === evtObj.keyCode || 49 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(1);
+    else if ((50 === evtObj.keyCode || 50 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(2);
+    else if ((51 === evtObj.keyCode || 51 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(3);
+    else if ((52 === evtObj.keyCode || 52 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(4);
+    else if ((53 === evtObj.keyCode || 53 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(5);
+
 }
 
 document.onkeydown = keyPress;
