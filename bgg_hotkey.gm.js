@@ -1,7 +1,8 @@
+"use strict";
 // ==UserScript==
 // @name         bgg hotkey
 // @namespace    bgg
-// @version      1.1
+// @version      1.2
 // @description  bgg video or wishlist
 // @match        https://*.boardgamegeek.com/boardgame/*
 // @match        https://boardgamegeek.com/boardgame/*
@@ -18,6 +19,11 @@
 // Ctrl+5        Wishlist 5
 // ==/KeyCodes==
 
+var KEY_1 = 49;
+var KEY_2 = 50;
+var KEY_3 = 51;
+var KEY_4 = 52;
+var KEY_5 = 53;
 
 function waitForEl(selector, callback, timeout) {
     if ($(selector).length) {
@@ -59,16 +65,16 @@ function setCheckboxValue(id, value) {
 
 // noinspection SpellCheckingInspection
 function setWishlistPriority(level) {
-    var wlp = $('select[ng-model=\"item.wishlistpriority\"]');
+    var wlp = $('select[ng-model="item.wishlistpriority"]');
     wlp.val('number:' + level);
     // noinspection JSUnresolvedFunction
     wlp.trigger('input');
     wlp.trigger('change');
     // noinspection JSUnresolvedFunction, JSUnresolvedVariable, ChainedFunctionCallJS, SpellCheckingInspection
-    unsafeWindow.jQuery('select[ng-model=\"item.wishlistpriority\"]').change();  // GM location hack
+    unsafeWindow.jQuery('select[ng-model="item.wishlistpriority"]').change();  // GM location hack
 }
 
-function openBoxFor(callback) {
+function openBoxFor(callback, timeout) {
     $('.toolbar-actions .toolbar-action:first .hidden-xs')[0].click();
     var editButton = $('.collection-dropdown-edit')[0] || '';
     if (editButton) {
@@ -80,7 +86,7 @@ function openBoxFor(callback) {
             $('.media-body')[0].click();
             callback();
         },
-        2000
+        timeout
     )
 }
 
@@ -93,6 +99,7 @@ function cancelBox() {
 }
 
 function wishlist(level) {
+    var timeout = 3000;
     openBoxFor(
         function () {
             if (1 === getCheckboxValue(1)) {  // Owned
@@ -106,20 +113,30 @@ function wishlist(level) {
                 setCheckboxValue(4, 4 >= level ? 1 : 0);  // Want to Play
                 saveBox();
             }
-        }
+        },
+        timeout
     );
 }
 
 function keyPress(e) {
-    "use strict";
-
-    var evtObj = window.event ? event : e;
-    if      ((49 === evtObj.keyCode || 49 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(1);
-    else if ((50 === evtObj.keyCode || 50 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(2);
-    else if ((51 === evtObj.keyCode || 51 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(3);
-    else if ((52 === evtObj.keyCode || 52 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(4);
-    else if ((53 === evtObj.keyCode || 53 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(5);
-
+    var evtObj = window.event ? window.event : e;
+    if (evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) {  // Ctrl + <something>
+        if (KEY_1 === evtObj.keyCode || KEY_1 === evtObj.which) {  // 1
+            wishlist(1);
+        }
+        else if (KEY_2 === evtObj.keyCode || KEY_2 === evtObj.which) {  // 2
+            wishlist(2);
+        }
+        else if (KEY_3 === evtObj.keyCode || KEY_3 === evtObj.which) {  // 3
+            wishlist(3);
+        }
+        else if (KEY_4 === evtObj.keyCode || KEY_4 === evtObj.which) {  // 4
+            wishlist(4);
+        }
+        else if (KEY_5 === evtObj.keyCode || KEY_5 === evtObj.which) {  // 5
+            wishlist(5);
+        }
+    }
 }
 
 document.onkeydown = keyPress;
