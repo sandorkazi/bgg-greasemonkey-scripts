@@ -19,11 +19,11 @@
 // Ctrl+5        Wishlist 5
 // ==/KeyCodes==
 
-var KEY_1 = 49;
-var KEY_2 = 50;
-var KEY_3 = 51;
-var KEY_4 = 52;
-var KEY_5 = 53;
+const KEY_1 = 49;
+const KEY_2 = 50;
+const KEY_3 = 51;
+const KEY_4 = 52;
+const KEY_5 = 53;
 
 function waitForEl(selector, callback, timeout) {
     if ($(selector).length) {
@@ -36,7 +36,7 @@ function waitForEl(selector, callback, timeout) {
 }
 
 function getCheckboxObject(id) {
-    var model = {
+    let model = {
         1: "item.status.own",
         2: "item.status.prevowned",
         3: "item.status.fortrade",
@@ -65,7 +65,7 @@ function setCheckboxValue(id, value) {
 
 // noinspection SpellCheckingInspection
 function setWishlistPriority(level) {
-    var wlp = $('select[ng-model="item.wishlistpriority"]');
+    let wlp = $('select[ng-model="item.wishlistpriority"]');
     wlp.val('number:' + level);
     // noinspection JSUnresolvedFunction
     wlp.trigger('input');
@@ -76,7 +76,7 @@ function setWishlistPriority(level) {
 
 function openBoxFor(callback, timeout) {
     $('.toolbar-actions .toolbar-action:first .hidden-xs')[0].click();
-    var editButton = $('.collection-dropdown-edit')[0] || '';
+    let editButton = $('.collection-dropdown-edit')[0] || '';
     if (editButton) {
         editButton.click();
     }
@@ -99,7 +99,7 @@ function cancelBox() {
 }
 
 function wishlist(level) {
-    var timeout = 3000;
+    const timeout = 3000;
     openBoxFor(
         function () {
             if (1 === getCheckboxValue(1)) {  // Owned
@@ -119,7 +119,7 @@ function wishlist(level) {
 }
 
 function keyPress(e) {
-    var evtObj = window.event ? window.event : e;
+    let evtObj = window.event ? window.event : e;
     if (evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) {  // Ctrl + <something>
         if (KEY_1 === evtObj.keyCode || KEY_1 === evtObj.which) {  // 1
             wishlist(1);

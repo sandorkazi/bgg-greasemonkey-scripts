@@ -21,17 +21,17 @@
 // Ctrl+5        Set every opened box to Wishlist 1
 // ==/KeyCodes==
 
-var KEY_Y = 89;
-var KEY_E = 69;
-var KEY_M = 77;
-var KEY_1 = 49;
-var KEY_2 = 50;
-var KEY_3 = 51;
-var KEY_4 = 52;
-var KEY_5 = 53;
+const KEY_Y = 89;
+const KEY_E = 69;
+const KEY_K = 75;
+const KEY_1 = 49;
+const KEY_2 = 50;
+const KEY_3 = 51;
+const KEY_4 = 52;
+const KEY_5 = 53;
 
-var buttonBoxClassName = "review_buttons_GREASEMONKEY";
-var iconSize = 12;
+const buttonBoxClassName = "review_buttons_GREASEMONKEY";
+const iconSize = 12;
 
 function videoUrl(videoHost, videoId) {
 
@@ -59,98 +59,77 @@ function videoIcon(videoHost) {
     }
 }
 
+function drawBox(box, hotVideo) {
+
+    // clear all
+    let reviewButtonBoxes = box.getElementsByClassName(buttonBoxClassName);
+    while (0 < reviewButtonBoxes.length) {
+        reviewButtonBoxes[0].parentNode.removeChild(reviewButtonBoxes[0]);
+    }
+
+    let reviewButtonBox = document.createElement("span");
+    reviewButtonBox.className = buttonBoxClassName;
+
+    let hotButton = document.createElement("a");
+    // noinspection JSUnresolvedVariable
+    hotButton.href = videoUrl(hotVideo.videohost, hotVideo.extvideoid);
+    hotButton.target = "_blank";
+
+    let hotButtonImage = document.createElement("img");
+    // noinspection JSUnresolvedVariable
+    hotButtonImage.src = videoIcon(hotVideo.videohost);
+    hotButtonImage.alt = "@";
+    hotButtonImage.height = iconSize;
+    hotButtonImage.width = iconSize;
+
+    hotButton.appendChild(hotButtonImage);
+
+    reviewButtonBox.appendChild(hotButton);
+
+    box.children[box.children.length - 1].appendChild(reviewButtonBox);
+
+}
+
 function addVideoBox(box) {
-
-    var id = box.getElementsByTagName("a")[0].href.split("/")[4];
-    hottestReview(
-        id,
-        function draw(hotVideo) {
-            // clear all
-            var reviewButtonBoxes = box.getElementsByClassName(buttonBoxClassName);
-            while (0 < reviewButtonBoxes.length) {
-                reviewButtonBoxes[0].parentNode.removeChild(reviewButtonBoxes[0]);
-            }
-
-            var reviewButtonBox = document.createElement("span");
-            reviewButtonBox.className = buttonBoxClassName;
-
-            var hotButton = document.createElement("a");
-            // noinspection JSUnresolvedVariable
-            hotButton.href = videoUrl(hotVideo.videohost, hotVideo.extvideoid);
-            hotButton.target = "_blank";
-
-            var hotButtonImage = document.createElement("img");
-            // noinspection JSUnresolvedVariable
-            hotButtonImage.src = videoIcon(hotVideo.videohost);
-            hotButtonImage.alt = "@";
-            hotButtonImage.height = iconSize;
-            hotButtonImage.width = iconSize;
-
-            hotButton.appendChild(hotButtonImage);
-
-            reviewButtonBox.appendChild(hotButton);
-
-            box.children[box.children.length - 1].appendChild(reviewButtonBox);
-        }
+    let id = box.getElementsByTagName("a")[0].href.split("/")[4];
+    hottestReview(id).then(
+        (hotVideo) => drawBox(box, hotVideo),
+        (error) => console.log('Could not get data for ' + id + ': ' + error)
     );
 }
 
 function reviewButtons() {
     // add all on search or collection page
-    var collectionNameBoxes = document.getElementsByClassName("collection_objectname");
+    let collectionNameBoxes = document.getElementsByClassName("collection_objectname");
     Array.prototype.forEach.call(collectionNameBoxes, addVideoBox);
 
     // add all on creator page
     // noinspection SpellCheckingInspection
-    var infoPageNameBoxes = document.getElementsByClassName("geekitem_linkeditems_title");
+    let infoPageNameBoxes = document.getElementsByClassName("geekitem_linkeditems_title");
     Array.prototype.forEach.call(infoPageNameBoxes, addVideoBox);
 }
 
-function serialize(obj) {
-    var str = "";
-    for (var key in obj) {
-        if ("" !== str) {
-            str += "&";
-        }
-        // noinspection JSUnfilteredForInLoop
-        str += key + "=" + encodeURIComponent(obj[key]);
-    }
-    return str;
-}
+function hottestReview(id) {
 
-function hottestReview(id, callback) {
+    let url = "https://boardgamegeek.com/api/videos?type=review&objecttype=thing&showcount=1&sort=hot&objectid=" + id;
 
-    var payload = {
-        "ajax": 1,
-        "nosession": 1,
-        "objectid": id,
-        "objecttype": "thing",
-        "showcount": 1,
-        "sort": "hot"
-    };
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        // noinspection JSUnresolvedVariable
+        xhr.onload = () => resolve(JSON.parse(xhr.response).videos[0]);
+        xhr.onerror = () => reject(xhr.statusText);
+        xhr.send();
+    });
 
-    var url = "https://boardgamegeek.com/api/videos?" + serialize(payload);
-
-    var xHttp = new XMLHttpRequest();
-    xHttp.open("GET", url, true);
-    xHttp.setRequestHeader("Content-type", "application/json");
-    xHttp.send();
-    xHttp.onreadystatechange = (
-        function () {
-            // noinspection MagicNumberJS
-            if (4 === this.readyState && 200 === this.status) {
-                // noinspection JSUnresolvedVariable
-                callback(JSON.parse(xHttp.response).videos[0]);
-            }
-        }
-    );
 }
 
 function wishlistMass(level) {
-    var boxes = document.getElementsByClassName('select-free');
+    let boxes = document.getElementsByClassName('select-free');
 
     Array.prototype.forEach.call(boxes, function (box) {
-        var inputs = box.getElementsByTagName('input');
+        let inputs = box.getElementsByTagName('input');
         Array.prototype.forEach.call(inputs, function (input) {
             switch (input.name) {
                 case 'wishlist':
@@ -169,14 +148,14 @@ function wishlistMass(level) {
                     break
             }
         });
-        var select = box.getElementsByTagName('select')[0];
+        let select = box.getElementsByTagName('select')[0];
         select.value = level;
         box.getElementsByClassName('geekinput')[0].click();
     });
 }
 
-function editAll(test) {
-    var boxes = document.getElementsByClassName('collection_status editfield');
+function editIf(test) {
+    let boxes = document.getElementsByClassName('collection_status');
 
     Array.prototype.forEach.call(boxes, function (box) {
         if (test(box)) {
@@ -186,13 +165,18 @@ function editAll(test) {
 }
 
 function editEmpty() {
-    editAll(function test(box) {
+    editIf(function test(box) {
         return "" === box.textContent.trim();
     })
 }
 
+function editAll() {
+    editIf(() => true)
+}
+
 function keyPress(e) {
-    var evtObj = window.event ? window.event : e;
+
+    let evtObj = window.event ? window.event : e;
     if (evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) {  // Ctrl + <something>
         if (KEY_Y === evtObj.keyCode || KEY_Y === evtObj.which) {  // Y
             reviewButtons();
@@ -200,7 +184,7 @@ function keyPress(e) {
         else if (KEY_E === evtObj.keyCode || KEY_E === evtObj.which) {  // E
             editEmpty();
         }
-        else if (KEY_M === evtObj.keyCode || KEY_M === evtObj.which) {  // M
+        else if (KEY_K === evtObj.keyCode || KEY_K === evtObj.which) {  // K
             editAll();
         }
         else if (KEY_1 === evtObj.keyCode || KEY_1 === evtObj.which) {  // 1

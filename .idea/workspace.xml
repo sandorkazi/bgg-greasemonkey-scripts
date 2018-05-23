@@ -2,19 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b2522e90-5b9b-48b9-b10e-ccb3660a0109" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/masu.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/angular-settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/angular-settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/bgg-greasemonkey-scripts.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/bgg-greasemonkey-scripts.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/masu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/masu.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/typescript-compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/typescript-compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bgg_hotkey.gm.js" beforeDir="false" afterPath="$PROJECT_DIR$/bgg_hotkey.gm.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" beforeDir="false" afterPath="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" afterDir="false" />
     </list>
@@ -27,20 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="bgg_mass_hotkey.gm.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="bgg_mass_hotkey.gm.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bgg_mass_hotkey.gm.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="196" column="8" lean-forward="true" selection-start-line="196" selection-start-column="8" selection-end-line="196" selection-end-column="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bgg_hotkey.gm.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/bgg_hotkey.gm.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="407">
-              <caret line="135" column="13" selection-start-line="135" selection-start-column="13" selection-end-line="135" selection-end-column="13" />
+            <state relative-caret-position="195">
+              <caret line="14" column="26" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -55,6 +37,7 @@
       <find>objectid</find>
       <find>getCheckboxObject</find>
       <find>openBoxFor</find>
+      <find>edit</find>
     </findStrings>
     <replaceStrings>
       <replace>'</replace>
@@ -68,8 +51,8 @@
       <list>
         <option value="$PROJECT_DIR$/bgg_mass_review.gm.js" />
         <option value="$PROJECT_DIR$/bgg_wishlist.gm.js" />
-        <option value="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" />
         <option value="$PROJECT_DIR$/bgg_hotkey.gm.js" />
+        <option value="$PROJECT_DIR$/bgg_mass_hotkey.gm.js" />
       </list>
     </option>
   </component>
@@ -138,7 +121,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="JavaScript.Libraries" />
+    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -219,7 +202,7 @@
       <workItem from="1512118968495" duration="33000" />
       <workItem from="1515598826426" duration="5027000" />
       <workItem from="1524810777640" duration="728000" />
-      <workItem from="1527064222968" duration="10136000" />
+      <workItem from="1527064222968" duration="17201000" />
     </task>
     <task id="LOCAL-00001" summary="wishlist hotkeys added">
       <created>1511384228338</created>
@@ -232,7 +215,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="50787000" />
+    <option name="totallyTimeSpent" value="57852000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="0" width="964" height="1035" extended-state="0" />
@@ -306,17 +289,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bgg_mass_hotkey.gm.js">
+    <entry file="file://$PROJECT_DIR$/bgg_hotkey.gm.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="196" column="8" lean-forward="true" selection-start-line="196" selection-start-column="8" selection-end-line="196" selection-end-column="8" />
+        <state relative-caret-position="15">
+          <caret line="14" column="30" selection-start-line="14" selection-start-column="30" selection-end-line="14" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bgg_hotkey.gm.js">
+    <entry file="file://$PROJECT_DIR$/bgg_mass_hotkey.gm.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="407">
-          <caret line="135" column="13" selection-start-line="135" selection-start-column="13" selection-end-line="135" selection-end-column="13" />
+        <state relative-caret-position="195">
+          <caret line="14" column="26" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="26" />
         </state>
       </provider>
     </entry>

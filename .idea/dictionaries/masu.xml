@@ -12,6 +12,8 @@
       <w>objectid</w>
       <w>objectname</w>
       <w>objecttype</w>
+      <w>onerror</w>
+      <w>onload</w>
       <w>preordered</w>
       <w>prevowned</w>
       <w>showcount</w>
