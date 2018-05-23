@@ -1,17 +1,19 @@
+"use strict";
 // ==UserScript==
 // @name         bgg mass hotkey
 // @namespace    bgg
-// @version      1.1
+// @version      1.2
 // @description  bgg mass video or wishlist
 // @match        https://*.boardgamegeek.com/*
 // @match        https://boardgamegeek.com/*
-// @author       You
-// @match        https://www.greasespot.net/2017/09/greasemonkey-4-for-users.html
-// @grant        none
+// @author       masu
+// @grant        GM_addStyle
 // ==/UserScript==
 
 // ==KeyCodes==
 // Ctrl+Y        Show video review button for all titles
+// Ctrl+E        Open editor box for all without a status (only for pages where this is listed)
+// Ctrl+M        Open editor box for all (only for pages where this is listed)
 // Ctrl+1        Set every opened box to Wishlist 1, Want to Play, Want in Trade, Want to Buy
 // Ctrl+2        Set every opened box to Wishlist 1, Want to Play, Want in Trade
 // Ctrl+3        Set every opened box to Wishlist 1, Want to Play
@@ -19,166 +21,188 @@
 // Ctrl+5        Set every opened box to Wishlist 1
 // ==/KeyCodes==
 
+const KEY_Y = 89;
+const KEY_E = 69;
+const KEY_K = 75;
+const KEY_1 = 49;
+const KEY_2 = 50;
+const KEY_3 = 51;
+const KEY_4 = 52;
+const KEY_5 = 53;
 
-var buttonBoxClassName = "review_buttons_GREASEMONKEY";
-var iconSize = 12;
+const buttonBoxClassName = "review_buttons_GREASEMONKEY";
+const iconSize = 12;
 
-function serialize(obj) {
-    "use strict";
+function videoUrl(videoHost, videoId) {
 
-    var str = "";
-    for (var key in obj) {
-        if ("" !== str) {
-            str += "&";
-        }
-        // noinspection JSUnfilteredForInLoop
-        str += key + "=" + encodeURIComponent(obj[key]);
-    }
-    return str;
-}
-
-function videoUrl(videohost, videoid) {
-    "use strict";
-
-    switch(videohost) {
+    switch (videoHost) {
         case "youtube":
-            return "https://youtu.be/" + videoid;
+            return "https://youtu.be/" + videoId;
         case "vimeo":
-            return "https://vimeo.com/" + videoid;
+            return "https://vimeo.com/" + videoId;
         default:
-            alert("Unknown video host: " + videohost);
+            alert("Unknown video host: " + videoHost);
             return "";
     }
 }
 
-function videoIcon(videohost) {
-    "use strict";
+function videoIcon(videoHost) {
 
-    switch(videohost) {
+    switch (videoHost) {
         case "youtube":
             return "https://youtube.com/favicon.ico";
         case "vimeo":
             return "https://vimeo.com/favicon.ico";
         default:
-            alert("Unknown video host: " + videohost);
+            alert("Unknown video host: " + videoHost);
             return "";
     }
 }
 
+function drawBox(box, hotVideo) {
+
+    // clear all
+    let reviewButtonBoxes = box.getElementsByClassName(buttonBoxClassName);
+    while (0 < reviewButtonBoxes.length) {
+        reviewButtonBoxes[0].parentNode.removeChild(reviewButtonBoxes[0]);
+    }
+
+    let reviewButtonBox = document.createElement("span");
+    reviewButtonBox.className = buttonBoxClassName;
+
+    let hotButton = document.createElement("a");
+    // noinspection JSUnresolvedVariable
+    hotButton.href = videoUrl(hotVideo.videohost, hotVideo.extvideoid);
+    hotButton.target = "_blank";
+
+    let hotButtonImage = document.createElement("img");
+    // noinspection JSUnresolvedVariable
+    hotButtonImage.src = videoIcon(hotVideo.videohost);
+    hotButtonImage.alt = "@";
+    hotButtonImage.height = iconSize;
+    hotButtonImage.width = iconSize;
+
+    hotButton.appendChild(hotButtonImage);
+
+    reviewButtonBox.appendChild(hotButton);
+
+    box.children[box.children.length - 1].appendChild(reviewButtonBox);
+
+}
+
 function addVideoBox(box) {
-    "use strict";
-
-    var id = box.getElementsByTagName("a")[0].href.split("/")[4];
-    hottestReview(
-        id,
-        function draw(hotVideo) {
-
-            // clear all
-            var reviewButtonBoxes = box.getElementsByClassName(buttonBoxClassName);
-            while (0 < reviewButtonBoxes.length) {
-                reviewButtonBoxes[0].parentNode.removeChild(reviewButtonBoxes[0]);
-            }
-
-            var reviewButtonBox = document.createElement("span");
-            reviewButtonBox.className = buttonBoxClassName;
-
-            var hotButton = document.createElement("a");
-            // noinspection JSUnresolvedVariable
-            hotButton.href = videoUrl(hotVideo.videohost, hotVideo.extvideoid);
-            hotButton.target = "_blank";
-
-            var hotButtonImage = document.createElement("img");
-            // noinspection JSUnresolvedVariable
-            hotButtonImage.src = videoIcon(hotVideo.videohost);
-            hotButtonImage.alt = "@";
-            hotButtonImage.height = iconSize;
-            hotButtonImage.width = iconSize;
-
-            hotButton.appendChild(hotButtonImage);
-
-            reviewButtonBox.appendChild(hotButton);
-
-            box.children[box.children.length - 1].appendChild(reviewButtonBox);
-        }
+    let id = box.getElementsByTagName("a")[0].href.split("/")[4];
+    hottestReview(id).then(
+        (hotVideo) => drawBox(box, hotVideo),
+        (error) => console.log('Could not get data for ' + id + ': ' + error)
     );
 }
 
 function reviewButtons() {
-    "use strict";
-
     // add all on search or collection page
-    var collectionNameBoxes = document.getElementsByClassName("collection_objectname");
+    let collectionNameBoxes = document.getElementsByClassName("collection_objectname");
     Array.prototype.forEach.call(collectionNameBoxes, addVideoBox);
 
     // add all on creator page
     // noinspection SpellCheckingInspection
-    var infoPageNameBoxes = document.getElementsByClassName("geekitem_linkeditems_title");
+    let infoPageNameBoxes = document.getElementsByClassName("geekitem_linkeditems_title");
     Array.prototype.forEach.call(infoPageNameBoxes, addVideoBox);
 }
 
-function hottestReview(id, callback) {
-    "use strict";
+function hottestReview(id) {
 
-    var payload = {
-        "ajax": 1,
-        "nosession": 1,
-        "objectid": id,
-        "objecttype": "thing",
-        "showcount": 1,
-        "sort": "hot"
-    };
+    let url = "https://boardgamegeek.com/api/videos?type=review&objecttype=thing&showcount=1&sort=hot&objectid=" + id;
 
-    var url = "https://boardgamegeek.com/api/videos?" + serialize(payload);
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        // noinspection JSUnresolvedVariable
+        xhr.onload = () => resolve(JSON.parse(xhr.response).videos[0]);
+        xhr.onerror = () => reject(xhr.statusText);
+        xhr.send();
+    });
 
-    var xHttp = new XMLHttpRequest();
-    xHttp.open("GET", url, true);
-    xHttp.setRequestHeader("Content-type", "application/json");
-    xHttp.send();
-    xHttp.onreadystatechange = (
-        function () {
-            if (4 === this.readyState && 200 === this.status) {
-                // noinspection JSUnresolvedVariable, JSCheckFunctionSignatures
-                callback(JSON.parse(xHttp.response).videos[0]);
-            }
-        }
-    )
 }
 
-function wishlist(level) {
-    "use strict";
+function wishlistMass(level) {
+    let boxes = document.getElementsByClassName('select-free');
 
-    var boxes = document.getElementsByClassName('select-free');
-
-    Array.prototype.forEach.call(boxes, function(box){
-        var inputs = box.getElementsByTagName('input');
-        Array.prototype.forEach.call(inputs, function(input){
-            if ('wishlist' === input.name) {
-                input.checked = 1;
-            } else if ('wanttobuy' === input.name) {
-                input.checked = 1 ? 1 >= level : 0;
-            } else if ('want' === input.name) {
-                input.checked = 1 ? 2 >= level : 0;
-            } else if ('wanttoplay' === input.name) {
-                input.checked = 1 ? 4 >= level : 0;
+    Array.prototype.forEach.call(boxes, function (box) {
+        let inputs = box.getElementsByTagName('input');
+        Array.prototype.forEach.call(inputs, function (input) {
+            switch (input.name) {
+                case 'wishlist':
+                    input.checked = 1;
+                    break;
+                case 'wanttobuy':
+                    input.checked = 1 ? 1 >= level : 0;
+                    break;
+                case 'want':
+                    input.checked = 1 ? 2 >= level : 0;
+                    break;
+                case 'wanttoplay':
+                    input.checked = 1 ? 4 >= level : 0;
+                    break;
+                default:
+                    break
             }
-        })
-        var select = box.getElementsByTagName('select')[0];
+        });
+        let select = box.getElementsByTagName('select')[0];
         select.value = level;
         box.getElementsByClassName('geekinput')[0].click();
     });
 }
 
+function editIf(test) {
+    let boxes = document.getElementsByClassName('collection_status');
+
+    Array.prototype.forEach.call(boxes, function (box) {
+        if (test(box)) {
+            box.click();
+        }
+    });
+}
+
+function editEmpty() {
+    editIf(function test(box) {
+        return "" === box.textContent.trim();
+    })
+}
+
+function editAll() {
+    editIf(() => true)
+}
+
 function keyPress(e) {
-    "use strict";
 
-    var evtObj = window.event ? window.event : e;
-    if      ((89 === evtObj.keyCode || 89 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) reviewButtons();
-    else if ((49 === evtObj.keyCode || 49 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(1);
-    else if ((50 === evtObj.keyCode || 50 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(2);
-    else if ((51 === evtObj.keyCode || 51 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(3);
-    else if ((52 === evtObj.keyCode || 52 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(4);
-    else if ((53 === evtObj.keyCode || 53 === evtObj.which) && evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) wishlist(5);
-
+    let evtObj = window.event ? window.event : e;
+    if (evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) {  // Ctrl + <something>
+        if (KEY_Y === evtObj.keyCode || KEY_Y === evtObj.which) {  // Y
+            reviewButtons();
+        }
+        else if (KEY_E === evtObj.keyCode || KEY_E === evtObj.which) {  // E
+            editEmpty();
+        }
+        else if (KEY_K === evtObj.keyCode || KEY_K === evtObj.which) {  // K
+            editAll();
+        }
+        else if (KEY_1 === evtObj.keyCode || KEY_1 === evtObj.which) {  // 1
+            wishlistMass(1);
+        }
+        else if (KEY_2 === evtObj.keyCode || KEY_2 === evtObj.which) {  // 2
+            wishlistMass(2);
+        }
+        else if (KEY_3 === evtObj.keyCode || KEY_3 === evtObj.which) {  // 3
+            wishlistMass(3);
+        }
+        else if (KEY_4 === evtObj.keyCode || KEY_4 === evtObj.which) {  // 4
+            wishlistMass(4);
+        }
+        else if (KEY_5 === evtObj.keyCode || KEY_5 === evtObj.which) {  // 5
+            wishlistMass(5);
+        }
+    }
 }
 
 document.onkeydown = keyPress;
