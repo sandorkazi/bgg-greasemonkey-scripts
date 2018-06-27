@@ -3,6 +3,7 @@
     <words>
       <w>boardgame</w>
       <w>boardgamegeek</w>
+      <w>collid</w>
       <w>editfield</w>
       <w>fortrade</w>
       <w>geekinput</w>
@@ -14,6 +15,7 @@
       <w>objecttype</w>
       <w>onerror</w>
       <w>onload</w>
+      <w>onreadystatechange</w>
       <w>preordered</w>
       <w>prevowned</w>
       <w>showcount</w>

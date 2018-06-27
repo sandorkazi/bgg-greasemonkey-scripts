@@ -154,14 +154,6 @@ function wishlistMass(level) {
     });
 }
 
-function saveAll() {
-    let boxes = document.getElementsByClassName('select-free');
-
-    Array.prototype.forEach.call(boxes, function (box) {
-        box.getElementsByClassName('geekinput')[0].click();
-    });
-}
-
 function editIf(test) {
     let statusBoxes = document.getElementsByClassName('collection_status');
 
@@ -183,53 +175,67 @@ function editAll() {
 }
 
 async function addGamePromise(box) {
-    if ("" === box.textContent.trim()) {
+    if ('' === box.textContent.trim()) {
         let id = box.getAttribute('onclick').match('objectid:[ \t]*\'([0-9]*)\'')[1];
         let collid = box.getAttribute('onclick').match('collid:[ \t]*\'([0-9]*)\'')[1];
 
-        if ('' == collid) {
-            let title = box.parentNode.getElementsByClassName('collection_objectname ')[0].getElementsByTagName('a')[0].textContent;
+        if ('' === collid) {
+            let title = (
+                box
+                .parentNode
+                .getElementsByClassName('collection_objectname ')[0]
+                .getElementsByTagName('a')[0]
+                .textContent
+            );
             console.log('Adding: ' + title + '\t (' + id + ')');
 
             let url = 'https://boardgamegeek.com/geekcollection.php';
-            let params = "fieldname=status&collid&objecttype=thing&objectid=" + id + "&B1=Cancel&wishlistpriority=1&ajax=1&action=savedata"
+            let params = (
+                "fieldname=status&collid&objecttype=thing&objectid="
+                + id
+                + "&B1=Cancel&wishlistpriority=1&ajax=1&action=savedata"
+            );
 
             return new Promise(function(resolve) {
                 let xhr = new XMLHttpRequest();
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
+                    // noinspection MagicNumberJS
+                    if (4 === xhr.readyState && 200 === xhr.status) {
                         resolve();
                     }
-                }
+                };
                 xhr.send(params);
             })
         }
     }
+    // noinspection JSCheckFunctionSignatures
+    return new Promise();
 }
 
-function addMore(page, lastPage, htmlbox=null) {
+function addMore(page, lastPage, htmlBox=null) {
     if (page > lastPage) {
         return;
     }
     console.log('Processing page: ' + page);
     let url = 'https://boardgamegeek.com/browse/boardgame/page/' + page;
-    if (null != htmlbox) {
-        let statusBoxes = Array.from(htmlbox.getElementsByClassName('collection_status'));
-        Promise.all(statusBoxes.map(addGamePromise)).then(addMore(page+1, lastPage, null));
-    }
-    else {
+    if (null === htmlBox) {
         let xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         xhr.setRequestHeader('Content-type', 'text/html');
         xhr.onload = function() {
-            let htmlbox = document.createElement('html');
-            htmlbox.innerHTML = xhr.response;
-            let statusBoxes = Array.from(htmlbox.getElementsByClassName('collection_status'));
+            let htmlBox = document.createElement('html');
+            // noinspection InnerHTMLJS
+            htmlBox.innerHTML = xhr.response;
+            let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
             Promise.all(statusBoxes.map(addGamePromise)).then(addMore(page+1, lastPage, null));
-        }
+        };
         xhr.send();
+    }
+    else {
+        let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
+        Promise.all(statusBoxes.map(addGamePromise)).then(addMore(page+1, lastPage, null));
     }
 }
 
@@ -240,11 +246,12 @@ function addGames() {
         xhr.open("GET", url, true);
         xhr.setRequestHeader('Content-type', 'text/html');
         xhr.onload = function() {
-            let htmlbox = document.createElement('html');
-            htmlbox.innerHTML = xhr.response;
-            let lastPage = parseInt(htmlbox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
-            addMore(1, lastPage, htmlbox);
-        }
+            let htmlBox = document.createElement('html');
+            // noinspection InnerHTMLJS
+            htmlBox.innerHTML = xhr.response;
+            let lastPage = parseInt(htmlBox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
+            addMore(1, lastPage, htmlBox);
+        };
         xhr.send();
     }
 }
