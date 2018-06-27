@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         bgg mass hotkey
 // @namespace    bgg
-// @version      1.2
+// @version      1.3
 // @description  bgg mass video or wishlist
 // @match        https://*.boardgamegeek.com/*
 // @match        https://boardgamegeek.com/*
@@ -11,9 +11,10 @@
 // ==/UserScript==
 
 // ==KeyCodes==
-// Ctrl+Y        Show video review button for all titles
+// Ctrl+Alt+A		 Add new games to collection
 // Ctrl+E        Open editor box for all without a status (only for pages where this is listed)
-// Ctrl+M        Open editor box for all (only for pages where this is listed)
+// Ctrl+K        Open editor box for all (only for pages where this is listed)
+// Ctrl+Y        Show video review button for all titles
 // Ctrl+1        Set every opened box to Wishlist 1, Want to Play, Want in Trade, Want to Buy
 // Ctrl+2        Set every opened box to Wishlist 1, Want to Play, Want in Trade
 // Ctrl+3        Set every opened box to Wishlist 1, Want to Play
@@ -21,9 +22,10 @@
 // Ctrl+5        Set every opened box to Wishlist 1
 // ==/KeyCodes==
 
-const KEY_Y = 89;
+const KEY_B = 66;
 const KEY_E = 69;
 const KEY_K = 75;
+const KEY_Y = 89;
 const KEY_1 = 49;
 const KEY_2 = 50;
 const KEY_3 = 51;
@@ -110,7 +112,6 @@ function reviewButtons() {
 }
 
 function hottestReview(id) {
-
     let url = "https://boardgamegeek.com/api/videos?type=review&objecttype=thing&showcount=1&sort=hot&objectid=" + id;
 
     return new Promise(function (resolve, reject) {
@@ -122,7 +123,6 @@ function hottestReview(id) {
         xhr.onerror = () => reject(xhr.statusText);
         xhr.send();
     });
-
 }
 
 function wishlistMass(level) {
@@ -154,10 +154,18 @@ function wishlistMass(level) {
     });
 }
 
-function editIf(test) {
-    let boxes = document.getElementsByClassName('collection_status');
+function saveAll() {
+    let boxes = document.getElementsByClassName('select-free');
 
     Array.prototype.forEach.call(boxes, function (box) {
+        box.getElementsByClassName('geekinput')[0].click();
+    });
+}
+
+function editIf(test) {
+    let statusBoxes = document.getElementsByClassName('collection_status');
+
+    Array.prototype.forEach.call(statusBoxes, function (box) {
         if (test(box)) {
             box.click();
         }
@@ -174,33 +182,107 @@ function editAll() {
     editIf(() => true)
 }
 
+async function addGamePromise(box) {
+    if ("" === box.textContent.trim()) {
+        let id = box.getAttribute('onclick').match('objectid:[ \t]*\'([0-9]*)\'')[1];
+        let collid = box.getAttribute('onclick').match('collid:[ \t]*\'([0-9]*)\'')[1];
+
+        if ('' == collid) {
+            let title = box.parentNode.getElementsByClassName('collection_objectname ')[0].getElementsByTagName('a')[0].textContent;
+            console.log('Adding: ' + title + '\t (' + id + ')');
+
+            let url = 'https://boardgamegeek.com/geekcollection.php';
+            let params = "fieldname=status&collid&objecttype=thing&objectid=" + id + "&B1=Cancel&wishlistpriority=1&ajax=1&action=savedata"
+
+            return new Promise(function(resolve) {
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        resolve();
+                    }
+                }
+                xhr.send(params);
+            })
+        }
+    }
+}
+
+function addMore(page, lastPage, htmlbox=null) {
+    if (page > lastPage) {
+        return;
+    }
+    console.log('Processing page: ' + page);
+    let url = 'https://boardgamegeek.com/browse/boardgame/page/' + page;
+    if (null != htmlbox) {
+        let statusBoxes = Array.from(htmlbox.getElementsByClassName('collection_status'));
+        Promise.all(statusBoxes.map(addGamePromise)).then(addMore(page+1, lastPage, null));
+    }
+    else {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.setRequestHeader('Content-type', 'text/html');
+        xhr.onload = function() {
+            let htmlbox = document.createElement('html');
+            htmlbox.innerHTML = xhr.response;
+            let statusBoxes = Array.from(htmlbox.getElementsByClassName('collection_status'));
+            Promise.all(statusBoxes.map(addGamePromise)).then(addMore(page+1, lastPage, null));
+        }
+        xhr.send();
+    }
+}
+
+function addGames() {
+    if (confirm('Adding new games to collection - this might take a while.\nDo not close this tab.')) {
+        let url = 'https://boardgamegeek.com/browse/boardgame';
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.setRequestHeader('Content-type', 'text/html');
+        xhr.onload = function() {
+            let htmlbox = document.createElement('html');
+            htmlbox.innerHTML = xhr.response;
+            let lastPage = parseInt(htmlbox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
+            addMore(1, lastPage, htmlbox);
+        }
+        xhr.send();
+    }
+}
+
 function keyPress(e) {
 
     let evtObj = window.event ? window.event : e;
-    if (evtObj.ctrlKey && !evtObj.altKey && !evtObj.shiftKey) {  // Ctrl + <something>
-        if (KEY_Y === evtObj.keyCode || KEY_Y === evtObj.which) {  // Y
-            reviewButtons();
+    if (evtObj.ctrlKey) {
+        if (!evtObj.altKey && !evtObj.shiftKey) {  // Ctrl + <something>
+            if (KEY_Y === evtObj.keyCode || KEY_Y === evtObj.which) {  // Y
+                reviewButtons();
+            }
+            else if (KEY_E === evtObj.keyCode || KEY_E === evtObj.which) {  // E
+                editEmpty();
+            }
+            else if (KEY_K === evtObj.keyCode || KEY_K === evtObj.which) {  // K
+                editAll();
+            }
+            else if (KEY_1 === evtObj.keyCode || KEY_1 === evtObj.which) {  // 1
+                wishlistMass(1);
+            }
+            else if (KEY_2 === evtObj.keyCode || KEY_2 === evtObj.which) {  // 2
+                wishlistMass(2);
+            }
+            else if (KEY_3 === evtObj.keyCode || KEY_3 === evtObj.which) {  // 3
+                wishlistMass(3);
+            }
+            else if (KEY_4 === evtObj.keyCode || KEY_4 === evtObj.which) {  // 4
+                wishlistMass(4);
+            }
+            else if (KEY_5 === evtObj.keyCode || KEY_5 === evtObj.which) {  // 5
+                wishlistMass(5);
+            }
         }
-        else if (KEY_E === evtObj.keyCode || KEY_E === evtObj.which) {  // E
-            editEmpty();
-        }
-        else if (KEY_K === evtObj.keyCode || KEY_K === evtObj.which) {  // K
-            editAll();
-        }
-        else if (KEY_1 === evtObj.keyCode || KEY_1 === evtObj.which) {  // 1
-            wishlistMass(1);
-        }
-        else if (KEY_2 === evtObj.keyCode || KEY_2 === evtObj.which) {  // 2
-            wishlistMass(2);
-        }
-        else if (KEY_3 === evtObj.keyCode || KEY_3 === evtObj.which) {  // 3
-            wishlistMass(3);
-        }
-        else if (KEY_4 === evtObj.keyCode || KEY_4 === evtObj.which) {  // 4
-            wishlistMass(4);
-        }
-        else if (KEY_5 === evtObj.keyCode || KEY_5 === evtObj.which) {  // 5
-            wishlistMass(5);
+        else if (!evtObj.altKey && evtObj.shiftKey) {  // Ctrl + Shift + <something>
+            if (KEY_B === evtObj.keyCode || KEY_B === evtObj.which) {  // B
+                addGames();
+            }
         }
     }
 }
