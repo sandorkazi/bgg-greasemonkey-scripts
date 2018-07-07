@@ -11,7 +11,7 @@
 // ==/UserScript==
 
 // ==KeyCodes==
-// Ctrl+Alt+A		 Add new games to collection
+// Ctrl+Alt+B		 Add new games to collection
 // Ctrl+E        Open editor box for all without a status (only for pages where this is listed)
 // Ctrl+K        Open editor box for all (only for pages where this is listed)
 // Ctrl+Y        Show video review button for all titles
@@ -154,6 +154,15 @@ function wishlistMass(level) {
     });
 }
 
+// noinspection JSUnusedGlobalSymbols
+function saveMass() {
+    let boxes = document.getElementsByClassName('select-free');
+
+    Array.prototype.forEach.call(boxes, function (box) {
+        box.getElementsByClassName('geekinput')[0].click();
+    });
+}
+
 function editIf(test) {
     let statusBoxes = document.getElementsByClassName('collection_status');
 
@@ -174,7 +183,7 @@ function editAll() {
     editIf(() => true)
 }
 
-async function addGamePromise(box) {
+async function addGamePromise(category, box) {
     if ('' === box.textContent.trim()) {
         let id = box.getAttribute('onclick').match('objectid:[ \t]*\'([0-9]*)\'')[1];
         let collid = box.getAttribute('onclick').match('collid:[ \t]*\'([0-9]*)\'')[1];
@@ -182,12 +191,12 @@ async function addGamePromise(box) {
         if ('' === collid) {
             let title = (
                 box
-                .parentNode
-                .getElementsByClassName('collection_objectname ')[0]
-                .getElementsByTagName('a')[0]
-                .textContent
+                    .parentNode
+                    .getElementsByClassName('collection_objectname ')[0]
+                    .getElementsByTagName('a')[0]
+                    .textContent
             );
-            console.log('Adding: ' + title + '\t (' + id + ')');
+            console.log('Adding (' + category + '): ' + title + '\t (' + id + ')');
 
             let url = 'https://boardgamegeek.com/geekcollection.php';
             let params = (
@@ -214,12 +223,12 @@ async function addGamePromise(box) {
     return new Promise();
 }
 
-function addMore(page, lastPage, htmlBox=null) {
+function addMore(category, page, lastPage, htmlBox=null) {
     if (page > lastPage) {
         return;
     }
-    console.log('Processing page: ' + page);
-    let url = 'https://boardgamegeek.com/browse/boardgame/page/' + page;
+    console.log('Processing page (' + category + '): ' + page);
+    let url = 'https://boardgamegeek.com/browse/' + category + '/page/' + page;
     if (null === htmlBox) {
         let xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
@@ -229,30 +238,32 @@ function addMore(page, lastPage, htmlBox=null) {
             // noinspection InnerHTMLJS
             htmlBox.innerHTML = xhr.response;
             let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
-            Promise.all(statusBoxes.map(addGamePromise)).then(addMore(page+1, lastPage, null));
+            Promise.all(statusBoxes.map((box) => (addGamePromise(category, box)))).then(addMore(category, page+1, lastPage, null));
         };
         xhr.send();
     }
     else {
         let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
-        Promise.all(statusBoxes.map(addGamePromise)).then(addMore(page+1, lastPage, null));
+        Promise.all(statusBoxes.map((box) => (addGamePromise(category, box)))).then(addMore(category, page+1, lastPage, null));
     }
 }
 
 function addGames() {
     if (confirm('Adding new games to collection - this might take a while.\nDo not close this tab.')) {
-        let url = 'https://boardgamegeek.com/browse/boardgame';
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-        xhr.setRequestHeader('Content-type', 'text/html');
-        xhr.onload = function() {
-            let htmlBox = document.createElement('html');
-            // noinspection InnerHTMLJS
-            htmlBox.innerHTML = xhr.response;
-            let lastPage = parseInt(htmlBox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
-            addMore(1, lastPage, htmlBox);
-        };
-        xhr.send();
+        ['boardgame', 'boardgameaccessory'].forEach(function(category){
+            let url = 'https://boardgamegeek.com/browse/' + category;
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.setRequestHeader('Content-type', 'text/html');
+            xhr.onload = function() {
+                let htmlBox = document.createElement('html');
+                // noinspection InnerHTMLJS
+                htmlBox.innerHTML = xhr.response;
+                let lastPage = parseInt(htmlBox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
+                addMore(category, 1, lastPage, htmlBox);
+            };
+            xhr.send();
+        });
     }
 }
 
