@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         bgg mass hotkey
 // @namespace    bgg
-// @version      1.3
+// @version      1.5
 // @description  bgg mass video or wishlist
 // @match        https://*.boardgamegeek.com/*
 // @match        https://boardgamegeek.com/*
@@ -11,7 +11,8 @@
 // ==/UserScript==
 
 // ==KeyCodes==
-// Ctrl+Alt+B		 Add new games to collection
+// Ctrl+Alt+A		 Add new boardgameaccessories to collection
+// Ctrl+Alt+B		 Add new boardgames to collection
 // Ctrl+E        Open editor box for all without a status (only for pages where this is listed)
 // Ctrl+K        Open editor box for all (only for pages where this is listed)
 // Ctrl+Y        Show video review button for all titles
@@ -22,6 +23,7 @@
 // Ctrl+5        Set every opened box to Wishlist 1
 // ==/KeyCodes==
 
+const KEY_A = 65;
 const KEY_B = 66;
 const KEY_E = 69;
 const KEY_K = 75;
@@ -238,32 +240,52 @@ function addMore(category, page, lastPage, htmlBox=null) {
             // noinspection InnerHTMLJS
             htmlBox.innerHTML = xhr.response;
             let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
-            Promise.all(statusBoxes.map((box) => (addGamePromise(category, box)))).then(addMore(category, page+1, lastPage, null));
+            Promise.all(
+                statusBoxes.map((box) => (addGamePromise(category, box)))
+            ).then(
+                addMore(category, page+1, lastPage, null)
+            );
         };
         xhr.send();
     }
     else {
         let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
-        Promise.all(statusBoxes.map((box) => (addGamePromise(category, box)))).then(addMore(category, page+1, lastPage, null));
+        Promise.all(
+            statusBoxes.map((box) => (addGamePromise(category, box)))
+        ).then(
+            addMore(category, page+1, lastPage, null)
+        );
     }
 }
 
-function addGames() {
+function addGames(category) {
+    if (category != 'boardgame' && category != 'boardgameaccessory') {
+        return;
+    }
     if (confirm('Adding new games to collection - this might take a while.\nDo not close this tab.')) {
-        ['boardgame', 'boardgameaccessory'].forEach(function(category){
-            let url = 'https://boardgamegeek.com/browse/' + category;
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", url, true);
-            xhr.setRequestHeader('Content-type', 'text/html');
-            xhr.onload = function() {
-                let htmlBox = document.createElement('html');
-                // noinspection InnerHTMLJS
-                htmlBox.innerHTML = xhr.response;
-                let lastPage = parseInt(htmlBox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
-                addMore(category, 1, lastPage, htmlBox);
-            };
-            xhr.send();
-        });
+        let url = 'https://boardgamegeek.com/browse/' + category;
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.setRequestHeader('Content-type', 'text/html');
+        xhr.onload = function() {
+            let htmlBox = document.createElement('html');
+            // noinspection InnerHTMLJS
+            htmlBox.innerHTML = xhr.response;
+            let lastPage = parseInt(htmlBox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
+            let startPage = prompt('Which page to start? (1-' + lastPage + ')?');
+            startPage = parseInt(startPage);
+            if (isNaN(startPage) || startPage > lastPage || startPage < 1) {
+                alert('Wrong start page');
+            }
+            else {
+                Promise.all(
+                    addMore(category, startPage, lastPage, 1 === startPage ? htmlBox : null)
+                ).then(
+                    console.log('Processing finished')
+                );
+            }
+        };
+        xhr.send();
     }
 }
 
@@ -298,8 +320,11 @@ function keyPress(e) {
             }
         }
         else if (!evtObj.altKey && evtObj.shiftKey) {  // Ctrl + Shift + <something>
-            if (KEY_B === evtObj.keyCode || KEY_B === evtObj.which) {  // B
-                addGames();
+            if (KEY_A === evtObj.keyCode || KEY_A === evtObj.which) {  // A
+                addGames('boardgameaccessory');
+            }
+            else if (KEY_B === evtObj.keyCode || KEY_B === evtObj.which) {  // B
+                addGames('boardgame');
             }
         }
     }
