@@ -11,8 +11,8 @@
 // ==/UserScript==
 
 // ==KeyCodes==
-// Ctrl+Alt+A		 Add new boardgameaccessories to collection
-// Ctrl+Alt+B		 Add new boardgames to collection
+// Ctrl+Alt+B    Add new boardgames to collection
+// Ctrl+Alt+N    Add new boardgameaccessories to collection
 // Ctrl+E        Open editor box for all without a status (only for pages where this is listed)
 // Ctrl+K        Open editor box for all (only for pages where this is listed)
 // Ctrl+Y        Show video review button for all titles
@@ -23,10 +23,10 @@
 // Ctrl+5        Set every opened box to Wishlist 1
 // ==/KeyCodes==
 
-const KEY_A = 65;
 const KEY_B = 66;
 const KEY_E = 69;
 const KEY_K = 75;
+const KEY_N = 78;
 const KEY_Y = 89;
 const KEY_1 = 49;
 const KEY_2 = 50;
@@ -227,39 +227,43 @@ async function addGamePromise(category, box) {
 
 function addMore(category, page, lastPage, htmlBox=null) {
     if (page > lastPage) {
-        return;
+        console.log('Processing finished');
     }
-    console.log('Processing page (' + category + '): ' + page);
-    let url = 'https://boardgamegeek.com/browse/' + category + '/page/' + page;
-    if (null === htmlBox) {
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-        xhr.setRequestHeader('Content-type', 'text/html');
-        xhr.onload = function() {
-            let htmlBox = document.createElement('html');
-            // noinspection InnerHTMLJS
-            htmlBox.innerHTML = xhr.response;
+    else {
+        console.log('Processing page (' + category + '): ' + page);
+        let url = 'https://boardgamegeek.com/browse/' + category + '/page/' + page;
+        if (null === htmlBox) {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.setRequestHeader('Content-type', 'text/html');
+            xhr.onload = function() {
+                let htmlBox = document.createElement('html');
+                // noinspection InnerHTMLJS
+                htmlBox.innerHTML = xhr.response;
+                let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
+                // noinspection JSCheckFunctionSignatures
+                Promise.all(
+                    statusBoxes.map((box) => (addGamePromise(category, box)))
+                ).then(
+                    addMore(category, page + 1, lastPage, null)
+                );
+            };
+            xhr.send();
+        }
+        else {
             let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
+            // noinspection JSCheckFunctionSignatures
             Promise.all(
                 statusBoxes.map((box) => (addGamePromise(category, box)))
             ).then(
-                addMore(category, page+1, lastPage, null)
+                addMore(category, page + 1, lastPage, null)
             );
-        };
-        xhr.send();
-    }
-    else {
-        let statusBoxes = Array.from(htmlBox.getElementsByClassName('collection_status'));
-        Promise.all(
-            statusBoxes.map((box) => (addGamePromise(category, box)))
-        ).then(
-            addMore(category, page+1, lastPage, null)
-        );
+        }
     }
 }
 
 function addGames(category) {
-    if (category != 'boardgame' && category != 'boardgameaccessory') {
+    if ('boardgame' !== category && 'boardgameaccessory' !== category) {
         return;
     }
     if (confirm('Adding new games to collection - this might take a while.\nDo not close this tab.')) {
@@ -274,15 +278,11 @@ function addGames(category) {
             let lastPage = parseInt(htmlBox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
             let startPage = prompt('Which page to start? (1-' + lastPage + ')?');
             startPage = parseInt(startPage);
-            if (isNaN(startPage) || startPage > lastPage || startPage < 1) {
+            if (isNaN(startPage) || startPage > lastPage || 1 > startPage) {
                 alert('Wrong start page');
             }
             else {
-                Promise.all(
-                    addMore(category, startPage, lastPage, 1 === startPage ? htmlBox : null)
-                ).then(
-                    console.log('Processing finished')
-                );
+                addMore(category, startPage, lastPage, 1 === startPage ? htmlBox : null);
             }
         };
         xhr.send();
@@ -320,11 +320,11 @@ function keyPress(e) {
             }
         }
         else if (!evtObj.altKey && evtObj.shiftKey) {  // Ctrl + Shift + <something>
-            if (KEY_A === evtObj.keyCode || KEY_A === evtObj.which) {  // A
-                addGames('boardgameaccessory');
-            }
-            else if (KEY_B === evtObj.keyCode || KEY_B === evtObj.which) {  // B
+            if (KEY_B === evtObj.keyCode || KEY_B === evtObj.which) {  // B
                 addGames('boardgame');
+            }
+            else if (KEY_N === evtObj.keyCode || KEY_N === evtObj.which) {  // N
+                addGames('boardgameaccessory');
             }
         }
     }
