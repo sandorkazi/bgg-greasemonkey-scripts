@@ -1,11 +1,11 @@
 "use strict";
 // ==UserScript==
-// @name         bgg contest (random fill)
+// @name         bgg contest
 // @namespace    bgg
 // @version      1.0
 // @description  bgg mass video or wishlist
-// @match        https://*.boardgamegeek.com/*
-// @match        https://boardgamegeek.com/*
+// @match        https://*.boardgamegeek.com/thread/*
+// @match        https://boardgamegeek.com/thread/*
 // @author       masu
 // @grant        GM_addStyle
 // ==/UserScript==
@@ -65,6 +65,9 @@ function randomFill(form) {
 
 function append() {
     let aEnter = document.querySelector('a[class="postlink"][target="_blank"][rel="nofollow"]');
+    if (null == aEnter) {
+        return;
+    }
     let aAutofill = document.querySelector('#autofill');
     if (null == aAutofill) {
         aAutofill = document.createElement('a');
