@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         bgg hotkey
 // @namespace    bgg
-// @version      1.2
+// @version      1.3
 // @description  bgg video or wishlist
 // @match        https://*.boardgamegeek.com/boardgame/*
 // @match        https://boardgamegeek.com/boardgame/*
@@ -139,4 +139,8 @@ function keyPress(e) {
     }
 }
 
-document.onkeydown = keyPress;
+let origKeyDown = document.onkeydown;
+document.onkeydown = function(e) {
+    keyPress(e);
+    origKeyDown(e);
+};

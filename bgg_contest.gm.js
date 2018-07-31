@@ -64,7 +64,13 @@ function randomFill(form) {
 }
 
 function append() {
-    let aEnter = document.querySelector('a[class="postlink"][target="_blank"][rel="nofollow"]');
+    let aContest = document.querySelector('a[href="/user/BGG Contest"]');
+    if (null == aContest) {
+        return;
+    }
+    let aEnter = (
+        aContest.parentElement.parentElement.parentElement.nextElementSibling
+    ).querySelector('a[class="postlink"][target="_blank"][rel="nofollow"]');
     if (null == aEnter) {
         return;
     }

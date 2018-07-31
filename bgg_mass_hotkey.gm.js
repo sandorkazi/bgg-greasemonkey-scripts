@@ -2,7 +2,7 @@
 // ==UserScript==
 // @name         bgg mass hotkey
 // @namespace    bgg
-// @version      1.5
+// @version      1.6
 // @description  bgg mass video or wishlist
 // @match        https://*.boardgamegeek.com/*
 // @match        https://boardgamegeek.com/*
@@ -330,4 +330,8 @@ function keyPress(e) {
     }
 }
 
-document.onkeydown = keyPress;
+let origKeyDown = document.onkeydown;
+document.onkeydown = function(e) {
+    keyPress(e);
+    origKeyDown(e);
+};
