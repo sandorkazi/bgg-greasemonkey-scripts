@@ -2,8 +2,8 @@
 // ==UserScript==
 // @name         bgg contest
 // @namespace    bgg
-// @version      1.0
-// @description  bgg mass video or wishlist
+// @version      1.1
+// @description  bgg contest autofill
 // @match        https://*.boardgamegeek.com/thread/*
 // @match        https://boardgamegeek.com/thread/*
 // @author       masu
@@ -68,9 +68,10 @@ function append() {
     if (null == aContest) {
         return;
     }
-    let aEnter = (
+    let as = (
         aContest.parentElement.parentElement.parentElement.nextElementSibling
-    ).querySelector('a[class="postlink"][target="_blank"][rel="nofollow"]');
+    ).querySelectorAll('a[class="postlink"][target="_blank"][rel="nofollow"]');
+    let aEnter = as[as.length - 1];
     if (null == aEnter) {
         return;
     }
