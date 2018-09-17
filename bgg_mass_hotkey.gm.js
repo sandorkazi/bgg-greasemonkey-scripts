@@ -17,10 +17,10 @@
 // Ctrl+K        Open editor box for all (only for pages where this is listed)
 // Ctrl+Y        Show video review button for all titles
 // Ctrl+1        Set every opened box to Wishlist 1, Want to Play, Want in Trade, Want to Buy
-// Ctrl+2        Set every opened box to Wishlist 1, Want to Play, Want in Trade
-// Ctrl+3        Set every opened box to Wishlist 1, Want to Play
-// Ctrl+4        Set every opened box to Wishlist 1, Want to Play
-// Ctrl+5        Set every opened box to Wishlist 1
+// Ctrl+2        Set every opened box to Wishlist 2, Want to Play, Want in Trade
+// Ctrl+3        Set every opened box to Wishlist 3, Want to Play
+// Ctrl+4        Set every opened box to Wishlist 4
+// Ctrl+5        Set every opened box to Wishlist 5
 // ==/KeyCodes==
 
 const KEY_B = 66;
@@ -144,7 +144,7 @@ function wishlistMass(level) {
                     input.checked = 1 ? 2 >= level : 0;
                     break;
                 case 'wanttoplay':
-                    input.checked = 1 ? 4 >= level : 0;
+                    input.checked = 1 ? 3 >= level : 0;
                     break;
                 default:
                     break

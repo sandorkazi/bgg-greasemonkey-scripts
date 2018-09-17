@@ -15,7 +15,7 @@
 // Ctrl+1        Wishlist 1, Want to Play, Want in Trade, Want to Buy
 // Ctrl+2        Wishlist 2, Want to Play, Want in Trade
 // Ctrl+3        Wishlist 3, Want to Play
-// Ctrl+4        Wishlist 4, Want to Play
+// Ctrl+4        Wishlist 4
 // Ctrl+5        Wishlist 5
 // ==/KeyCodes==
 
@@ -110,7 +110,7 @@ function wishlist(level) {
                 setWishlistPriority(level);  // Wishlist priority
                 setCheckboxValue(6, 1 >= level ? 1 : 0);  // Want to Buy
                 setCheckboxValue(5, 2 >= level ? 1 : 0);  // Want in Trade
-                setCheckboxValue(4, 4 >= level ? 1 : 0);  // Want to Play
+                setCheckboxValue(4, 3 >= level ? 1 : 0);  // Want to Play
                 saveBox();
             }
         },
