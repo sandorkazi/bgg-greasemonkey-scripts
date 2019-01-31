@@ -12,6 +12,7 @@
 
 function parseAnswer(radioButton) {
     let text = radioButton.nextSibling.textContent.trim();
+    // noinspection JSValidateTypes
     text = text.split(')');
     return {
         'radio': radioButton,
@@ -23,6 +24,7 @@ function parseAnswer(radioButton) {
 function parseQuestion(box) {
     let question = box.firstChild.textContent.trim();
     let answers = Array.from(box.querySelectorAll('input')).map(parseAnswer);
+    // noinspection JSValidateTypes
     question = question.split(':');
     return {
         'question_id': question.shift().trim(),
