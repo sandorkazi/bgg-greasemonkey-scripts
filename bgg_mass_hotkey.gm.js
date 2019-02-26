@@ -266,27 +266,20 @@ function addGames(category) {
     if ('boardgame' !== category && 'boardgameaccessory' !== category) {
         return;
     }
-    if (confirm('Adding new games to collection - this might take a while.\nDo not close this tab.')) {
-        let url = 'https://boardgamegeek.com/browse/' + category;
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-        xhr.setRequestHeader('Content-type', 'text/html');
-        xhr.onload = function() {
-            let htmlBox = document.createElement('html');
-            // noinspection InnerHTMLJS
-            htmlBox.innerHTML = xhr.response;
-            let lastPage = parseInt(htmlBox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
-            let startPage = prompt('Which page to start? (1-' + lastPage + ')?');
-            startPage = parseInt(startPage);
-            if (isNaN(startPage) || startPage > lastPage || 1 > startPage) {
-                alert('Wrong start page');
-            }
-            else {
-                addMore(category, startPage, lastPage, 1 === startPage ? htmlBox : null);
-            }
-        };
-        xhr.send();
-    }
+    let url = 'https://boardgamegeek.com/browse/' + category;
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.setRequestHeader('Content-type', 'text/html');
+    xhr.onload = function() {
+        let htmlBox = document.createElement('html');
+        // noinspection InnerHTMLJS
+        htmlBox.innerHTML = xhr.response;
+        let lastPage = parseInt(htmlBox.querySelectorAll('a[title="last page"]')[0].textContent.slice(1, -1));
+        lastPage = Math.min(lastPage, 50);
+        let startPage = 1;
+        addMore(category, startPage, lastPage, 1 === startPage ? htmlBox : null);
+    };
+    xhr.send();
 }
 
 function keyPress(e) {
