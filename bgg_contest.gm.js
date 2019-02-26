@@ -68,7 +68,10 @@ function randomFill(form) {
 function append() {
     let aContest = document.querySelector('a[href="/user/BGG Contest"]');
     if (null == aContest) {
-        return;
+        aContest = document.querySelector('a[href="/user/chaddyboy_2000"]');
+        if (null == aContest) {
+            return;
+        }
     }
     let as = (
         aContest.parentElement.parentElement.parentElement.nextElementSibling
